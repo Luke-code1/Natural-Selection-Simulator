@@ -12,36 +12,52 @@ public class RunnerControl : EntityControl
 
     private int safe; //number of runner objects which have safely made it accross the map in a given generation
 
-    public void IncrementSafe() { safe++; } //increments the integer 'safe'
-    public void DecrementSafe() { safe--; } //decrements the integer 'safe'
+    public void IncrementSafe() { safe++; } 
+    public void DecrementSafe() { safe--; } 
 
-    public float GetBoundary() { return boundary; } //getter method for boundary
-    public int GetDirection() { return direction; } //getter method for direction
+    public float GetBoundary() { return boundary; } 
+    public int GetDirection() { return direction; } 
     public bool MovingAllowed() { return moving_allowed; }
+
+
+    private bool AllSafe()
+    {
+        if (safe == TypeList.Count)
+        {
+            Debug.Log("All runner objects are safe.");
+            return true;
+        }
+        return false;
+    }
 
 
     void Start()
     {
-        direction = 1; //starting value of direction in the simulation
-        moving_allowed = true;
+        direction = -1; //starting value of direction in the simulation
+        moving_allowed = false;
     }
 
 
     void Update()
     {
-        if (safe == TypeList.Count)
+        if (moving_allowed)
         {
-            moving_allowed = false;
-            if (Input.GetKeyDown("space"))
+            if (AllSafe())
             {
-                Debug.Log("SPACE");
-                direction *= -1;
-                safe = 0;
+                moving_allowed = false;
             }
         }
         else
         {
-            moving_allowed = true;
+            if (Input.GetKeyDown("space"))
+            {
+                direction *= -1;
+                safe = 0;
+                moving_allowed = true;
+                Debug.Log("User pressed spacebar.");
+                Debug.Log("Direction changed.");
+            }
         }
+
     }
 }

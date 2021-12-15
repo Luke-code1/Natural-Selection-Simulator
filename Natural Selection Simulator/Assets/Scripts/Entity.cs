@@ -13,6 +13,7 @@ public class Entity : MonoBehaviour
     protected float efficiency;
     protected float energy;
 
+
     public void GiveAttributes(float parent_speed, float parent_size, float parent_efficiency, Vector3 parent_position) 
     {
         self = GameObject.Find(name);
@@ -23,6 +24,11 @@ public class Entity : MonoBehaviour
         size = parent_size;
 
     } //called in the reproduce method by parent on newly instantaited object to share attributes
+
+    protected void Reproduce()
+    {
+
+    }
 
 
     void Start()

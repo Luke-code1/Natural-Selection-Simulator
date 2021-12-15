@@ -14,9 +14,9 @@ public class Runner : Entity
     private float fear_coefficient;
 
 
-    public void GiveAttributes(float parent_speed, float parent_size, float parent_efficiency, float parent_fear_coefficient, Vector3 parent_position) //overload of method from parent class
+    public void GiveAttributes(float parent_speed, float parent_size, float parent_efficiency, float parent_fear_coefficient, Vector3 parent_position) 
     {
-        base.GiveAttributes(parent_speed, parent_size, parent_efficiency, parent_position); //calls parent class method
+        base.GiveAttributes(parent_speed, parent_size, parent_efficiency, parent_position); 
         fear_coefficient = parent_fear_coefficient;
     } //overload of parent class method to include 'fear_coefficient'
 
@@ -25,7 +25,11 @@ public class Runner : Entity
     {
         if ((body.position.x)*RunnerControl.GetDirection() >= boundary) 
         {
+            Debug.Log("Safe position reached at position " + body.position);
             body.position = new Vector3(boundary * RunnerControl.GetDirection() - 10 * RunnerControl.GetDirection(), body.position.y, body.position.z);
+            times_crossed++;
+            Debug.Log("Object repositioned to " + body.position);
+            Debug.Log("times_crossed = " + times_crossed);
             return true;
         } 
         //if the position of a runner object is past the safe boundary the method will return true
@@ -45,14 +49,15 @@ public class Runner : Entity
     void Start()
     {
         RunnerControl = GameObject.Find("EntityControls").GetComponent<RunnerControl>();
-        boundary = RunnerControl.GetBoundary(); //set value of boundary to the appropriate boundary given by 'RunnerControl'
+        boundary = RunnerControl.GetBoundary(); 
 
         body = GetComponent<Rigidbody>();
         body.freezeRotation = true;
 
-        speed = 70; //filler value for version one
+        speed = 45; //filler value for version one
 
         RunnerControl.TypeList.Add(self); //adds object to the list containing all runner instances
+        Reproduce();
 
     }
 
@@ -62,13 +67,13 @@ public class Runner : Entity
         if (RunnerControl.MovingAllowed()) //only checks if object is safe when 'moving_allowed' is true because otherwise all alive objects will be safe anyway
         {
             safe = Safe();
-            if (!safe) //if object has not reached the safe boundary
+            if (!safe) 
             {
-                moving = true; //while the object is unsafe it will be able to move               
+                moving = true;       
             }
             else //if object has reached the safe boundary
             {
-                moving = false; //while object is safe it will be unable to move
+                moving = false; 
                 times_crossed++;
                 RunnerControl.IncrementSafe(); //tells 'RunnerControl' that a runner object is safe 
             }
