@@ -8,28 +8,21 @@ public class Runner : Entity
     private RunnerControl RunnerControl;
     private float boundary;
 
-    private bool safe;
+    private bool safe_this_generation;
     private bool moving;
     private int times_crossed;
     private float fear_coefficient;
 
-
-    public void GiveAttributes(float parent_speed, float parent_size, float parent_efficiency, float parent_fear_coefficient, Vector3 parent_position) 
-    {
-        base.GiveAttributes(parent_speed, parent_size, parent_efficiency, parent_position); 
-        fear_coefficient = parent_fear_coefficient;
-    } //overload of parent class method to include 'fear_coefficient'
-
+    private float varience;
 
     private bool Safe()  
     {
         if ((body.position.x)*RunnerControl.GetDirection() >= boundary) 
         {
-            Debug.Log("Safe position reached at position " + body.position);
-            body.position = new Vector3(boundary * RunnerControl.GetDirection() - 10 * RunnerControl.GetDirection(), body.position.y, body.position.z);
             times_crossed++;
-            Debug.Log("Object repositioned to " + body.position);
-            Debug.Log("times_crossed = " + times_crossed);
+            //Debug.Log("Safe position reached at position " + body.position);
+            body.position = new Vector3(boundary * RunnerControl.GetDirection() - 10 * RunnerControl.GetDirection(), body.position.y, body.position.z);
+            //Debug.Log("Object repositioned to " + body.position);
             return true;
         } 
         //if the position of a runner object is past the safe boundary the method will return true
@@ -39,6 +32,10 @@ public class Runner : Entity
         return false;
     } 
 
+    public void NewGeneration()
+    {
+        safe_this_generation = false;
+    }
 
     private Vector3 CalculateVelocityVector()
     {
@@ -48,37 +45,52 @@ public class Runner : Entity
 
     void Start()
     {
+        self = this.gameObject;
         RunnerControl = GameObject.Find("EntityControls").GetComponent<RunnerControl>();
-        boundary = RunnerControl.GetBoundary(); 
-
         body = GetComponent<Rigidbody>();
         body.freezeRotation = true;
 
-        speed = 45; //filler value for version one
+        safe_this_generation = false;
+        times_crossed = 0;
+
+        varience = RunnerControl.GetVarience();
+        boundary = RunnerControl.GetBoundary();
+
+        speed = 70.0f; //filler value //speed + Random.Range(-speed * varience, speed * varience);
+        size = size + Random.Range(-size * varience, size * varience);
+        efficiency = efficiency + Random.Range(-efficiency * varience, efficiency * varience);
+        fear_coefficient = fear_coefficient + Random.Range(-fear_coefficient * varience, fear_coefficient * varience);
 
         RunnerControl.TypeList.Add(self); //adds object to the list containing all runner instances
-        Reproduce();
-
     }
 
 
     void Update()
     {
-        if (RunnerControl.MovingAllowed()) //only checks if object is safe when 'moving_allowed' is true because otherwise all alive objects will be safe anyway
-        {
-            safe = Safe();
-            if (!safe) 
+        if (RunnerControl.MovingAllowed() && !safe_this_generation)
+        { //only checks if object is safe in the cases where it is possible for an object to be not safe
+            if (!Safe()) 
             {
-                moving = true;       
+                moving = true;
+                //Debug.Log(name + " moving: " + moving);
             }
             else //if object has reached the safe boundary
             {
-                moving = false; 
-                times_crossed++;
+                safe_this_generation = true;
+                moving = false;
+                Debug.Log(name + " moving: " + moving);
+
                 RunnerControl.IncrementSafe(); //tells 'RunnerControl' that a runner object is safe 
             }
         }
-
+        else if (!RunnerControl.MovingAllowed())
+        { //if 'moving allowed' is false then 'safe_this_generation' will be true
+            if (times_crossed == 3)
+            {
+                Reproduce();
+                times_crossed = 0;
+            }
+        }
     }
 
 

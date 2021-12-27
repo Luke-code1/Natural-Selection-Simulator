@@ -9,6 +9,7 @@ public class RunnerControl : EntityControl
 
     private int direction;
     private bool moving_allowed;
+    private float variance;
 
     private int safe; //number of runner objects which have safely made it accross the map in a given generation
 
@@ -17,6 +18,7 @@ public class RunnerControl : EntityControl
 
     public float GetBoundary() { return boundary; } 
     public int GetDirection() { return direction; } 
+    public float GetVarience() { return variance; }
     public bool MovingAllowed() { return moving_allowed; }
 
 
@@ -24,7 +26,7 @@ public class RunnerControl : EntityControl
     {
         if (safe == TypeList.Count)
         {
-            Debug.Log("All runner objects are safe.");
+            Debug.Log("All runner objects are safe. (" + safe + ")");
             return true;
         }
         return false;
@@ -35,6 +37,7 @@ public class RunnerControl : EntityControl
     {
         direction = -1; //starting value of direction in the simulation
         moving_allowed = false;
+        variance = 0.05f;
     }
 
 
@@ -45,6 +48,7 @@ public class RunnerControl : EntityControl
             if (AllSafe())
             {
                 moving_allowed = false;
+                Debug.Log("moving_allowed: " + moving_allowed);
             }
         }
         else
@@ -53,11 +57,14 @@ public class RunnerControl : EntityControl
             {
                 direction *= -1;
                 safe = 0;
+                foreach (GameObject runner in TypeList)
+                {
+                    runner.GetComponent<Runner>().NewGeneration();
+                }
                 moving_allowed = true;
-                Debug.Log("User pressed spacebar.");
-                Debug.Log("Direction changed.");
+                Debug.Log("moving_allowed: " + moving_allowed);
+                Debug.Log("Direction: " + direction);
             }
         }
-
     }
 }

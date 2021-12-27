@@ -7,7 +7,6 @@ public class EntityControl : MonoBehaviour
 
     public List<GameObject> TypeList = new List<GameObject>();
 
-
     void Start()
     {
         

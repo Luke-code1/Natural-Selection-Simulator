@@ -14,27 +14,16 @@ public class Entity : MonoBehaviour
     protected float energy;
 
 
-    public void GiveAttributes(float parent_speed, float parent_size, float parent_efficiency, Vector3 parent_position) 
-    {
-        self = GameObject.Find(name);
-
-        body.position = parent_position;
-        speed = parent_speed;
-        efficiency = parent_efficiency;
-        size = parent_size;
-
-    } //called in the reproduce method by parent on newly instantaited object to share attributes
-
     protected void Reproduce()
     {
-
+        GameObject child = Instantiate(self, body.position, Quaternion.identity);
+        Debug.Log("Copy created.");
     }
 
 
     void Start()
     {
-        body = GetComponent<Rigidbody>();
-        body.freezeRotation = true;
+
     }
 
 
