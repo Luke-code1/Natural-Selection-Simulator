@@ -13,8 +13,6 @@ public class Runner : Entity
     private int times_crossed;
     private float fear_coefficient;
 
-    private float varience;
-
     private bool Safe()  
     {
         if ((body.position.x)*RunnerControl.GetDirection() >= boundary) 
@@ -32,34 +30,30 @@ public class Runner : Entity
         return false;
     } 
 
-    public void NewGeneration()
-    {
-        safe_this_generation = false;
-    }
+    public void NewGeneration() { safe_this_generation = false; }
 
     private Vector3 CalculateVelocityVector()
     {
+        Vector3 ClosestEnemy = LocateClosestEnemy(RunnerControl.EnemyList);
+        Debug.Log("Closest tagger: " + ClosestEnemy);
         return new Vector3(RunnerControl.GetDirection(), 0, 0) * speed; //filler for version one
     }
-
 
     void Start()
     {
         self = this.gameObject;
-        RunnerControl = GameObject.Find("EntityControls").GetComponent<RunnerControl>();
+        RunnerControl = GameObject.Find("Control").GetComponent<RunnerControl>();
         body = GetComponent<Rigidbody>();
         body.freezeRotation = true;
 
         safe_this_generation = false;
         times_crossed = 0;
-
-        varience = RunnerControl.GetVarience();
         boundary = RunnerControl.GetBoundary();
 
-        speed = 70.0f; //filler value //speed + Random.Range(-speed * varience, speed * varience);
-        size = size + Random.Range(-size * varience, size * varience);
-        efficiency = efficiency + Random.Range(-efficiency * varience, efficiency * varience);
-        fear_coefficient = fear_coefficient + Random.Range(-fear_coefficient * varience, fear_coefficient * varience);
+        speed = 70; //filler value //speed + Random.Range(-speed * RunnerControl.variance, speed * RunnerControl.variance);
+        size = size + Random.Range(-size * RunnerControl.variance, size * RunnerControl.variance);
+        efficiency = efficiency + Random.Range(-efficiency * RunnerControl.variance, efficiency * RunnerControl.variance);
+        fear_coefficient = fear_coefficient + Random.Range(-fear_coefficient * RunnerControl.variance, fear_coefficient * RunnerControl.variance);
 
         RunnerControl.TypeList.Add(self); //adds object to the list containing all runner instances
     }

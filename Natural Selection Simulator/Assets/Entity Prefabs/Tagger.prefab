@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8511312036353229944}
   - component: {fileID: 5226827509437300359}
   - component: {fileID: 5632940087410016275}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2510015224458ae478119ad3dc8fe67b, type: 2}
+  - {fileID: 2100000, guid: ebea5aa20493852409045cf7e02c93ed, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,10 +106,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2816423747302088222}
   - component: {fileID: 4312149003428662181}
-  - component: {fileID: 9114507568169263802}
-  m_Layer: 6
-  m_Name: Runner
-  m_TagString: Runner
+  - component: {fileID: 6525902178404912940}
+  m_Layer: 7
+  m_Name: Tagger
+  m_TagString: Tagger
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -145,7 +145,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &9114507568169263802
+--- !u!114 &6525902178404912940
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,7 +154,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7156512673380285649}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4209b2f862b5539468061e404c180c75, type: 3}
+  m_Script: {fileID: 11500000, guid: 79b3212fa5aa2ed448c5790595dc8e72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 0}
