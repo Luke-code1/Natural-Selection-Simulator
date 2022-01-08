@@ -15,15 +15,11 @@ public class Entity : MonoBehaviour
 
     public Vector3 Position() { return body.position; }
 
-    protected void Reproduce()
-    {
-        Instantiate(self, body.position, Quaternion.identity);
-        Debug.Log("Copy created.");
-    }
     public void DestroySelf(List<GameObject> TypeList)
     {
         TypeList.Remove(gameObject);
         Destroy(gameObject);
+        //Debug.Log(name + "destroyed.");
     }
 
     protected Vector3 LocateClosestEnemy(List<GameObject> EnemyList) //returns position of closest enemy

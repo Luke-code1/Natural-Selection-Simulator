@@ -5,8 +5,9 @@ using UnityEngine;
 public class RunnerControl : EntityControl
 {
 
-    private float boundary = 80.0f; //magnitude of x-oordinate that a runner object needs to reach to become safe
+    [SerializeField] GameObject runner_prefab;
 
+    private float boundary = 80.0f; //magnitude of x-oordinate that a runner object needs to reach to become safe
     private int direction;
     private bool moving_allowed;
 
@@ -35,7 +36,15 @@ public class RunnerControl : EntityControl
 
         direction = -1; //starting value of direction in the simulation
         moving_allowed = false;
-        variance = 0.05f;
+        variance = 0.2f;
+
+
+        for (int i = 0; i < SimulationControl.GetRunnerCount(); i++)
+        {
+            GameObject runner = Instantiate(runner_prefab, new Vector3(-70, 1.5f, Random.Range(-48, 48)), Quaternion.identity);
+            Runner runner_script = runner.GetComponent<Runner>();
+            runner_script.RecieveAttributes(SimulationControl.RunnerAttributes());
+        }
     }
 
     void Update()

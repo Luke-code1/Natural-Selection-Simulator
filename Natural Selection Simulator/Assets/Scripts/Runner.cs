@@ -13,6 +13,24 @@ public class Runner : Entity
     private int times_crossed;
     private float fear_coefficient;
 
+    public void RecieveAttributes(float[] attributes)
+    {
+        Debug.Log("speed: " + attributes[0] + "size: " + attributes[1] + "efficiency" + attributes[2] + "fear_coefficienct: " + attributes[3]);
+        speed = attributes[0];
+        size = attributes[1];
+        efficiency = attributes[2];
+        fear_coefficient = attributes[3];
+    }
+
+    private void Reproduce()
+    {
+        GameObject child = Instantiate(self, body.position, Quaternion.identity);
+        Runner child_script = child.GetComponent<Runner>();
+        child_script.RecieveAttributes(new float[] {speed, size, efficiency, fear_coefficient});
+
+        Debug.Log("Copy created.");
+    }
+
     private bool Safe()  
     {
         if ((body.position.x)*RunnerControl.GetDirection() >= boundary) 
@@ -28,15 +46,18 @@ public class Runner : Entity
         //similar reasoning for if (body.position.x > boundary) and (direction = 1), therefore condition is true when runner object is past the safe line
 
         return false;
-    } 
+    }
 
+    public bool SafeThisGeneration() { return safe_this_generation; }
     public void NewGeneration() { safe_this_generation = false; }
 
     private Vector3 CalculateVelocityVector()
     {
         Vector3 ClosestEnemy = LocateClosestEnemy(RunnerControl.EnemyList);
-        Debug.Log("Closest tagger: " + ClosestEnemy);
-        return new Vector3(RunnerControl.GetDirection(), 0, 0) * speed; //filler for version one
+        //Debug.Log(name + " Closest tagger: " + ClosestEnemy);
+        Vector3 NormalizedRelativePosition = (body.position - ClosestEnemy).normalized; 
+        Vector3 NormalizedVelocityVector = (fear_coefficient * NormalizedRelativePosition + new Vector3(RunnerControl.GetDirection(), 0, 0)).normalized;
+        return speed * NormalizedVelocityVector;
     }
 
     void Start()
@@ -46,21 +67,21 @@ public class Runner : Entity
         body = GetComponent<Rigidbody>();
         body.freezeRotation = true;
 
-        safe_this_generation = false;
+        safe_this_generation = false; 
         times_crossed = 0;
         boundary = RunnerControl.GetBoundary();
 
-        speed = 70; //filler value //speed + Random.Range(-speed * RunnerControl.variance, speed * RunnerControl.variance);
+        speed = speed + Random.Range(-speed * RunnerControl.variance, speed * RunnerControl.variance);
         size = size + Random.Range(-size * RunnerControl.variance, size * RunnerControl.variance);
         efficiency = efficiency + Random.Range(-efficiency * RunnerControl.variance, efficiency * RunnerControl.variance);
         fear_coefficient = fear_coefficient + Random.Range(-fear_coefficient * RunnerControl.variance, fear_coefficient * RunnerControl.variance);
 
-        RunnerControl.TypeList.Add(self); //adds object to the list containing all runner instances
+        RunnerControl.TypeList.Add(gameObject); //adds object to the list containing all runner instances
     }
-
 
     void Update()
     {
+        //Debug.Log("speed: " + speed + "size: " + size);
         if (RunnerControl.MovingAllowed() && !safe_this_generation)
         { //only checks if object is safe in the cases where it is possible for an object to be not safe
             if (!Safe()) 
@@ -72,7 +93,7 @@ public class Runner : Entity
             {
                 safe_this_generation = true;
                 moving = false;
-                Debug.Log(name + " moving: " + moving);
+                //Debug.Log(name + " moving: " + moving);
 
                 RunnerControl.IncrementSafe(); //tells 'RunnerControl' that a runner object is safe 
             }
@@ -93,6 +114,7 @@ public class Runner : Entity
         if (moving)
         {
             body.velocity = CalculateVelocityVector();
+            //Debug.Log(name + " absolute speed: " + body.velocity.magnitude);
         }
         else
         {
