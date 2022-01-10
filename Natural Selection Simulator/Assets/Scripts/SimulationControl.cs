@@ -37,8 +37,8 @@ public class SimulationControl : MonoBehaviour
         RunnerControl = GameObject.Find("Control").GetComponent<RunnerControl>();
         TaggerControl = GameObject.Find("Control").GetComponent<TaggerControl>();
 
-        runner_count = 50; tagger_count = 20;
-        runner_speed = 30.0f; tagger_speed = 30.0f;
+        runner_count = 20; tagger_count = 20;
+        runner_speed = 40.0f; tagger_speed = 30.0f;
         runner_size = 5.0f; tagger_size = 5.0f;
         runner_efficiency = 0.7f; tagger_efficiency = 0.7f;
         runner_fear_coefficient = 0.45f;
@@ -55,6 +55,7 @@ public class SimulationControl : MonoBehaviour
 
     void Update()
     {
-        
+
+
     }
 }

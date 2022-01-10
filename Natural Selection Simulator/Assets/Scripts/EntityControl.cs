@@ -9,6 +9,8 @@ public class EntityControl : MonoBehaviour
     public List<GameObject> EnemyList = new List<GameObject>();
 
     public SimulationControl SimulationControl; //defined in 'RunnerControl' and 'TaggerControl'
+    protected float starting_energy;
+    public float StartingEnergy() { return starting_energy; }
 
     public float variance { get; set; }
 

@@ -134,6 +134,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Platform
       objectReference: {fileID: 0}
+    - target: {fileID: 3662475482656786460, guid: 3fd00c91bf3e2a94aa7c13b835065fce, type: 3}
+      propertyPath: m_Name
+      value: SideWall2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7356088063882568912, guid: 3fd00c91bf3e2a94aa7c13b835065fce, type: 3}
+      propertyPath: m_Name
+      value: SideWall1
+      objectReference: {fileID: 0}
     - target: {fileID: 7534202548460575971, guid: 3fd00c91bf3e2a94aa7c13b835065fce, type: 3}
       propertyPath: m_RootOrder
       value: 1

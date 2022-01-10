@@ -8,6 +8,7 @@ public class RunnerControl : EntityControl
     [SerializeField] GameObject runner_prefab;
 
     private float boundary = 80.0f; //magnitude of x-oordinate that a runner object needs to reach to become safe
+
     private int direction;
     private bool moving_allowed;
 
@@ -36,8 +37,9 @@ public class RunnerControl : EntityControl
 
         direction = -1; //starting value of direction in the simulation
         moving_allowed = false;
-        variance = 0.2f;
+        variance = 0.35f;
 
+        starting_energy = 70000f; //filler value
 
         for (int i = 0; i < SimulationControl.GetRunnerCount(); i++)
         {
@@ -66,7 +68,11 @@ public class RunnerControl : EntityControl
                 safe = 0;
                 foreach (GameObject runner in TypeList)
                 {
-                    runner.GetComponent<Runner>().NewGeneration();
+                    runner.GetComponent<Runner>().NewGeneration(); //'safe_this_generation' set to false
+                }
+                foreach (GameObject tagger in EnemyList)
+                {
+                    tagger.GetComponent<Tagger>().NewGeneration(); //'safe_this_generation' set to false
                 }
                 moving_allowed = true;
                 //Debug.Log("moving_allowed: " + moving_allowed);

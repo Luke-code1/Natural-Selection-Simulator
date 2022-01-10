@@ -8,16 +8,15 @@ public class Runner : Entity
     private RunnerControl RunnerControl;
     private float boundary;
 
-    private bool safe_this_generation;
     private bool moving;
     private int times_crossed;
-    private float fear_coefficient;
+    [SerializeField] private float fear_coefficient;
 
     public void RecieveAttributes(float[] attributes)
     {
-        Debug.Log("speed: " + attributes[0] + "size: " + attributes[1] + "efficiency" + attributes[2] + "fear_coefficienct: " + attributes[3]);
+        //Debug.Log("speed: " + attributes[0] + "size: " + attributes[1] + "efficiency" + attributes[2] + "fear_coefficienct: " + attributes[3]);
         speed = attributes[0];
-        size = attributes[1];
+        size = attributes[1]; 
         efficiency = attributes[2];
         fear_coefficient = attributes[3];
     }
@@ -49,14 +48,13 @@ public class Runner : Entity
     }
 
     public bool SafeThisGeneration() { return safe_this_generation; }
-    public void NewGeneration() { safe_this_generation = false; }
 
     private Vector3 CalculateVelocityVector()
     {
-        Vector3 ClosestEnemy = LocateClosestEnemy(RunnerControl.EnemyList);
+        Vector3 ClosestEnemy = LocateClosestEnemy(ref RunnerControl.EnemyList);
         //Debug.Log(name + " Closest tagger: " + ClosestEnemy);
-        Vector3 NormalizedRelativePosition = (body.position - ClosestEnemy).normalized; 
-        Vector3 NormalizedVelocityVector = (fear_coefficient * NormalizedRelativePosition + new Vector3(RunnerControl.GetDirection(), 0, 0)).normalized;
+        Vector3 NormalizedRelativePosition = (body.position - ClosestEnemy).normalized;  //relative position vecotr: tagger to runner
+        Vector3 NormalizedVelocityVector = (fear_coefficient * NormalizedRelativePosition + new Vector3(RunnerControl.GetDirection()*0.7f, 0, 0)).normalized;
         return speed * NormalizedVelocityVector;
     }
 
@@ -67,7 +65,8 @@ public class Runner : Entity
         body = GetComponent<Rigidbody>();
         body.freezeRotation = true;
 
-        safe_this_generation = false; 
+        safe_this_generation = false;
+        energy = RunnerControl.StartingEnergy();
         times_crossed = 0;
         boundary = RunnerControl.GetBoundary();
 
@@ -86,6 +85,7 @@ public class Runner : Entity
         { //only checks if object is safe in the cases where it is possible for an object to be not safe
             if (!Safe()) 
             {
+                energy -= (Time.deltaTime * size * speed * speed) / efficiency; //depletion of energy while moving
                 moving = true;
                 //Debug.Log(name + " moving: " + moving);
             }
@@ -100,7 +100,8 @@ public class Runner : Entity
         }
         else if (!RunnerControl.MovingAllowed())
         { //if 'moving allowed' is false then 'safe_this_generation' will be true
-            if (times_crossed == 3)
+            energy = RunnerControl.StartingEnergy(); //reset to the starting amount of energy each generation
+            if (times_crossed == 2)
             {
                 Reproduce();
                 times_crossed = 0;
@@ -111,15 +112,23 @@ public class Runner : Entity
 
     private void FixedUpdate()
     {
-        if (moving)
+        if (moving && energy > 0)
         {
             body.velocity = CalculateVelocityVector();
-            //Debug.Log(name + " absolute speed: " + body.velocity.magnitude);
+            //Debug.Log("energy: " + energy);
         }
         else
         {
             body.velocity = Vector3.zero;
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.name == "SideWall1" || collision.collider.name == "SideWall2")
+        {
+            body.position = new Vector3(body.position.x, body.position.y, 0);
+        }    
     }
 
 }

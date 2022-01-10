@@ -8,12 +8,13 @@ public class Entity : MonoBehaviour
     protected Rigidbody body; //component required for movement and position
     protected GameObject self; //reference to own instance
 
-    protected float speed;
-    protected float size;
-    protected float efficiency;
-    protected float energy;
+    [SerializeField] protected float speed;
+    [SerializeField] protected float size;
+    [SerializeField] protected float efficiency;
+    [SerializeField] protected float energy;
 
-    public Vector3 Position() { return body.position; }
+    protected bool safe_this_generation;
+    public void NewGeneration() { safe_this_generation = false; }
 
     public void DestroySelf(List<GameObject> TypeList)
     {
@@ -22,7 +23,7 @@ public class Entity : MonoBehaviour
         //Debug.Log(name + "destroyed.");
     }
 
-    protected Vector3 LocateClosestEnemy(List<GameObject> EnemyList) //returns position of closest enemy
+    protected Vector3 LocateClosestEnemy(ref List<GameObject> EnemyList) //returns position of closest enemy
     {
 
         Vector3 ClosestEnemyPosition = body.position; //sets closest enemy to itself for the case where no enemy is located
