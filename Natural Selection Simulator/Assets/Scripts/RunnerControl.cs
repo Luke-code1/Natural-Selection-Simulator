@@ -21,6 +21,17 @@ public class RunnerControl : EntityControl
     public int GetDirection() { return direction; } 
     public bool MovingAllowed() { return moving_allowed; }
 
+    private bool GenerationStart()
+    {
+        foreach (GameObject runner in TypeList)
+        {
+            Runner runner_script = runner.GetComponent<Runner>();
+            SimulationControl.AppendGenerationRunnerData(runner_script.Attributes()); //adds attributes of runner to an array
+            runner_script.NewGeneration(); //'safe_this_generation' set to false
+        }
+        return true;
+    }
+
     private bool AllSafe()
     {
         if (safe == TypeList.Count)
@@ -66,14 +77,7 @@ public class RunnerControl : EntityControl
             {
                 direction *= -1;
                 safe = 0;
-                foreach (GameObject runner in TypeList)
-                {
-                    runner.GetComponent<Runner>().NewGeneration(); //'safe_this_generation' set to false
-                }
-                foreach (GameObject tagger in EnemyList)
-                {
-                    tagger.GetComponent<Tagger>().NewGeneration(); //'safe_this_generation' set to false
-                }
+                SimulationControl.r_tag = GenerationStart();
                 moving_allowed = true;
                 //Debug.Log("moving_allowed: " + moving_allowed);
                 Debug.Log("Direction: " + direction);

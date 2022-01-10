@@ -10,6 +10,8 @@ public class Tagger : Entity
     private int runners_tagged;
     private int generations_not_tagged;
 
+    private float[] attribute_array;
+
     public void RecieveAttributes(float[] attributes)
     {
         //Debug.Log("speed: " + attributes[0] + "size: " + attributes[1] + "efficiency" + attributes[2]);
@@ -18,13 +20,15 @@ public class Tagger : Entity
         efficiency = attributes[2];
     }
 
+    public float[] Attributes() { return attribute_array; }
+
     private void Reproduce()
     {
         GameObject child = Instantiate(self, body.position, Quaternion.identity);
         Tagger child_script = child.GetComponent<Tagger>();
         child_script.RecieveAttributes(new float[] { speed, size, efficiency });
 
-        Debug.Log("Copy created.");
+        //Debug.Log("Copy created.");
     }
 
     private void Reposition() { body.position = new Vector3(0, 1.5f, Random.Range(-48, 48)); }
@@ -74,6 +78,8 @@ public class Tagger : Entity
         speed = speed + Random.Range(-speed * TaggerControl.variance, speed * TaggerControl.variance);
         size = size + Random.Range(-size * TaggerControl.variance, size * TaggerControl.variance);
         efficiency = efficiency + Random.Range(-efficiency * TaggerControl.variance, efficiency * TaggerControl.variance);
+
+        attribute_array = new float[] { speed, size, efficiency };
 
         TaggerControl.TypeList.Add(gameObject);
     }

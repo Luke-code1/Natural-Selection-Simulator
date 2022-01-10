@@ -5,6 +5,46 @@ using UnityEngine;
 public class SimulationControl : MonoBehaviour
 {
 
+    public class AttributeArray //structure for item in list containing simulation data
+    {
+        private float[] attribute_array; //data
+        public AttributeArray(float[] attributes) //consctructor
+        {
+            attribute_array = attributes;
+        }
+        public float GetItem(int index) { return attribute_array[index]; }
+        public void SetItem(int index, float value) { attribute_array[index] = value; }       
+    }
+
+    private AttributeArray MeanEntity(List<AttributeArray> array, int max_index) //returns AttributeArray describing the mean runner/ tagger that generation
+    {
+        AttributeArray mean_entity = new AttributeArray(new float[] { 0, 0, 0, 0 });
+        int length = array.Count;
+        for (int i = 0; i <= max_index; i++)
+        {
+            float total = 0;
+            foreach (AttributeArray entity in array)
+            {
+                total += entity.GetItem(i); //sum of particular attribute from a generation
+            }
+            mean_entity.SetItem(i, total / length); //sets mean_entity[i] to the mean of that attribute
+        }
+        return mean_entity;
+    }
+
+    private List<AttributeArray> MeanRunnerData = new List<AttributeArray>(); //contains mean runner/ tagger of each generation
+    private List<AttributeArray> MeanTaggerData = new List<AttributeArray>();
+
+    private List<AttributeArray> GenerationRunnerData = new List<AttributeArray>(); //contains all runners/ taggers of a given generation
+    private List<AttributeArray> GenerationTaggerData = new List<AttributeArray>(); //emptied each generation
+
+    public void AppendGenerationRunnerData(float[] attributes) { GenerationRunnerData.Add(new AttributeArray(attributes)); }
+    public void AppendGenerationTaggerData(float[] attributes) { GenerationTaggerData.Add(new AttributeArray(attributes)); }
+
+    public bool t_tag { get; set; } //tag that tells script when to append MeanEntity(GenerationTaggerData) to MeanTaggerData
+    public bool r_tag { get; set; } //tag that tells script when to append MeanEntity(GenerationRunnerData) to MeanRunnerData
+
+
     private RunnerControl RunnerControl;
     private TaggerControl TaggerControl;
 
@@ -37,7 +77,7 @@ public class SimulationControl : MonoBehaviour
         RunnerControl = GameObject.Find("Control").GetComponent<RunnerControl>();
         TaggerControl = GameObject.Find("Control").GetComponent<TaggerControl>();
 
-        runner_count = 20; tagger_count = 20;
+        runner_count = 200; tagger_count = 60;
         runner_speed = 40.0f; tagger_speed = 30.0f;
         runner_size = 5.0f; tagger_size = 5.0f;
         runner_efficiency = 0.7f; tagger_efficiency = 0.7f;
@@ -50,12 +90,38 @@ public class SimulationControl : MonoBehaviour
     void Start()
     {
 
-
     }
 
     void Update()
     {
+        if(r_tag)
+        {
+            MeanRunnerData.Add(MeanEntity(GenerationRunnerData, 3));
+            GenerationRunnerData = new List<AttributeArray>();
+            r_tag = false;
+            //Debug.Log("Runner data count: " + MeanRunnerData.Count);           
+            DisplayAttributeArrayList(MeanRunnerData, 3, true);
+        }
+        if (t_tag)
+        {
+            MeanTaggerData.Add(MeanEntity(GenerationTaggerData, 2));
+            GenerationTaggerData = new List<AttributeArray>();
+            t_tag = false;
+            //Debug.Log("Tagger data count: " + MeanTaggerData.Count);
+            DisplayAttributeArrayList(MeanTaggerData, 2, false);
+        }
+    }
 
-
+    public void DisplayAttributeArrayList(List<AttributeArray> list, int max_index, bool runner)
+    { //purely for debugging purposes
+        if (runner) { Debug.Log("Runner:"); }
+        else { Debug.Log("Tagger"); }
+        foreach (AttributeArray arr in list)
+        {
+            for (int i = 0; i <= max_index; i++)
+            {
+                Debug.Log(i + ": " + arr.GetItem(i));
+            }
+        }
     }
 }

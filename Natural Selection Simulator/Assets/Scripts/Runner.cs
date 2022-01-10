@@ -11,6 +11,7 @@ public class Runner : Entity
     private bool moving;
     private int times_crossed;
     [SerializeField] private float fear_coefficient;
+    private float[] attribute_array;
 
     public void RecieveAttributes(float[] attributes)
     {
@@ -21,13 +22,15 @@ public class Runner : Entity
         fear_coefficient = attributes[3];
     }
 
+    public float[] Attributes() { return attribute_array; }
+
     private void Reproduce()
     {
         GameObject child = Instantiate(self, body.position, Quaternion.identity);
         Runner child_script = child.GetComponent<Runner>();
         child_script.RecieveAttributes(new float[] {speed, size, efficiency, fear_coefficient});
 
-        Debug.Log("Copy created.");
+        //Debug.Log("Copy created.");
     }
 
     private bool Safe()  
@@ -74,6 +77,8 @@ public class Runner : Entity
         size = size + Random.Range(-size * RunnerControl.variance, size * RunnerControl.variance);
         efficiency = efficiency + Random.Range(-efficiency * RunnerControl.variance, efficiency * RunnerControl.variance);
         fear_coefficient = fear_coefficient + Random.Range(-fear_coefficient * RunnerControl.variance, fear_coefficient * RunnerControl.variance);
+
+        attribute_array = new float[] { speed, size, efficiency, fear_coefficient };
 
         RunnerControl.TypeList.Add(gameObject); //adds object to the list containing all runner instances
     }

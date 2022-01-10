@@ -43,7 +43,6 @@ public class Entity : MonoBehaviour
         return ClosestEnemyPosition;
     }
 
-
     void Start()
     {
 
