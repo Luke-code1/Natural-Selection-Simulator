@@ -29,7 +29,6 @@ public class TaggerControl : EntityControl
     {
         SimulationControl = GameObject.Find("Control").GetComponent<SimulationControl>();
 
-        variance = 0.15f;
         no_tag_limit = 2; //filler value
         tag_to_reproduce = 2; //filler value 
         starting_energy = 70000.0f; //filler value

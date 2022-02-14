@@ -48,7 +48,6 @@ public class RunnerControl : EntityControl
 
         direction = -1; //starting value of direction in the simulation
         moving_allowed = false;
-        variance = 0.35f;
 
         starting_energy = 70000f; //filler value
 

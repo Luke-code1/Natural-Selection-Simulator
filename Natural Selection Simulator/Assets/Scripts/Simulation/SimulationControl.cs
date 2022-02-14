@@ -44,7 +44,6 @@ public class SimulationControl : MonoBehaviour
     public bool t_tag { get; set; } //tag that tells script when to append MeanEntity(GenerationTaggerData) to MeanTaggerData
     public bool r_tag { get; set; } //tag that tells script when to append MeanEntity(GenerationRunnerData) to MeanRunnerData
 
-
     private RunnerControl RunnerControl;
     private TaggerControl TaggerControl;
 
@@ -74,17 +73,30 @@ public class SimulationControl : MonoBehaviour
 
     void Awake()
     {
+        DontDestroyOnLoad(GameObject.Find("InputManager"));
+        Parameters parameters = GameObject.Find("InputManager").GetComponent<Parameters>();
+
         RunnerControl = GameObject.Find("Control").GetComponent<RunnerControl>();
         TaggerControl = GameObject.Find("Control").GetComponent<TaggerControl>();
 
-        runner_count = 200; tagger_count = 60;
-        runner_speed = 40.0f; tagger_speed = 30.0f;
-        runner_size = 5.0f; tagger_size = 5.0f;
-        runner_efficiency = 0.7f; tagger_efficiency = 0.7f;
-        runner_fear_coefficient = 0.45f;
+        runner_count = (int)parameters.R_attributes()[0]; ; tagger_count = (int)parameters.T_attributes()[0];
+        runner_speed = parameters.R_attributes()[2]; tagger_speed = parameters.T_attributes()[2];
+        runner_size = parameters.R_attributes()[3]; tagger_size = parameters.T_attributes()[3];
+        runner_efficiency = parameters.R_attributes()[4]; tagger_efficiency = parameters.T_attributes()[4];
+        runner_fear_coefficient = parameters.R_attributes()[5];
+
+        RunnerControl.variance = parameters.R_attributes()[1];
+        TaggerControl.variance = parameters.T_attributes()[1];
+
+        /*runner_count = 20; ; tagger_count = 20;
+        runner_speed = 50; tagger_speed = 45;
+        runner_size = 10; tagger_size = 10;
+        runner_efficiency = 0.9f; tagger_efficiency = 0.9f;
+        runner_fear_coefficient = 0.2f; */
 
         runner_attribute_arr = new float[] { runner_speed, runner_size, runner_efficiency, runner_fear_coefficient };
         tagger_attribute_arr = new float[] { tagger_speed, tagger_size, tagger_efficiency };
+
     }
 
     void Start()
